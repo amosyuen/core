@@ -591,6 +591,33 @@ def test_logarithm(hass: HomeAssistant) -> None:
     assert render(hass, "{{ log(0, 10, default=1) }}") == 1
 
 
+def test_abs(hass: HomeAssistant) -> None:
+    """Test abs."""
+    tests = [
+        (0, 0),
+        (3, 1),
+        (-200, -1),
+    ]
+
+    for value, expected in tests:
+        assert (
+            template.Template("{{ %s | abs }}" % value, hass).async_render() == expected
+        )
+        assert render(hass, f"{{{{ abs({value}) }}}}") == expected
+
+    # Test handling of invalid input
+    with pytest.raises(TemplateError):
+        template.Template("{{ 'duck' | abs }}", hass).async_render()
+    with pytest.raises(TemplateError):
+        template.Template("{{ invalid | abs('duck') }}", hass).async_render()
+
+    # Test handling of default return value
+    assert render(hass, "{{ 'no_number' | abs(1) }}") == 1
+    assert render(hass, "{{ 'no_number' | abs(default=1) }}") == 1
+    assert render(hass, "{{ abs('no_number', 1) }}") == 1
+    assert render(hass, "{{ abs('no_number', default=1) }}") == 1
+
+
 def test_sine(hass: HomeAssistant) -> None:
     """Test sine."""
     tests = [

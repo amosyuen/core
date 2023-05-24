@@ -1662,6 +1662,16 @@ def logarithm(value, base=math.e, default=_SENTINEL):
         return default
 
 
+def abs(value, default=_SENTINEL):
+    """Filter and function to get absolute value of the value."""
+    try:
+        return math.fabs(float(value))
+    except (ValueError, TypeError):
+        if default is _SENTINEL:
+            raise_no_default("abs", value)
+        return default
+
+
 def sine(value, default=_SENTINEL):
     """Filter and function to get sine of the value."""
     try:
@@ -2293,6 +2303,7 @@ class TemplateEnvironment(ImmutableSandboxedEnvironment):
         self.filters["round"] = forgiving_round
         self.filters["multiply"] = multiply
         self.filters["log"] = logarithm
+        self.filters["abs"] = abs
         self.filters["sin"] = sine
         self.filters["cos"] = cosine
         self.filters["tan"] = tangent
@@ -2335,6 +2346,7 @@ class TemplateEnvironment(ImmutableSandboxedEnvironment):
         self.filters["version"] = version
         self.filters["contains"] = contains
         self.globals["log"] = logarithm
+        self.globals["abs"] = abs
         self.globals["sin"] = sine
         self.globals["cos"] = cosine
         self.globals["tan"] = tangent
